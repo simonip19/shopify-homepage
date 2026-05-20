@@ -1,0 +1,216 @@
+{{ 'section-overlapping-image-text.css' | asset_url | stylesheet_tag }}
+
+<section id="overlapping-image-text-{{ section.id }}" class="overlapping-image-text" style="
+        --section-vertical-space: {{ section.settings.spacing_vertical }}px;
+        --section-vertical-space-m: {{ section.settings.mobile_spacing_vertical }}px;
+
+        --image-width: {{ section.settings.image_width }}%;
+        --image-height-desktop: {{ section.settings.image_height_desktop }}px;
+        --image-height-mobile: {{ section.settings.image_height_mobile }}px;
+
+        --content-width: {{ section.settings.content_width }}px;
+    ">
+    <div class="overlapping-image-text__inner overlapping-image-text__inner--{{ section.settings.layout }}">
+        <div class="overlapping-image-text__media">
+            {% if section.settings.image != blank %}
+            {{
+                section.settings.image
+                | image_url: width: 1800
+                | image_tag:
+                class: 'overlapping-image-text__image',
+                loading: 'lazy',
+                widths: '375, 550, 750, 990, 1200, 1500, 1800',
+                sizes: '(max-width: 749px) 100vw, 80vw',
+                alt: section.settings.image.alt
+            }}
+            {% else %}
+            <div class="overlapping-image-text__placeholder">
+                {{ 'lifestyle-2' | placeholder_svg_tag: 'placeholder-svg' }}
+            </div>
+            {% endif %}
+        </div>
+
+        <div
+            class="overlapping-image-text__content overlapping-image-text__content--{{ section.settings.text_alignment }}">
+            {% if section.settings.heading != blank %}
+            <h2 class="overlapping-image-text__heading">
+                {{ section.settings.heading }}
+            </h2>
+            {% endif %}
+
+            {% if section.settings.text != blank %}
+            <div class="overlapping-image-text__text">
+                {{ section.settings.text }}
+            </div>
+            {% endif %}
+
+            {% if section.settings.button_label != blank %}
+            <a class="overlapping-image-text__button button" href="{{ section.settings.button_link | default: '#' }}" {%
+                if section.settings.open_new_tab %} target="_blank" rel="noopener noreferrer" {% endif %}>
+                {{ section.settings.button_label }}
+            </a>
+            {% endif %}
+        </div>
+    </div>
+</section>
+
+{% schema %}
+{
+  "name": "Overlapping image text",
+  "tag": "section",
+  "class": "section overlapping-image-text-section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Vacay This Way"
+    },
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": "Text",
+      "default": "<p>Everything you need for your summer get away!</p>"
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "Button label",
+      "default": "Shop Summer Essentials"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Button link"
+    },
+    {
+      "type": "checkbox",
+      "id": "open_new_tab",
+      "label": "Open button link in new tab",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "select",
+      "id": "layout",
+      "label": "Content position",
+      "default": "left",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "text_alignment",
+      "label": "Text alignment",
+      "default": "left",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ]
+    },
+    {
+      "type": "range",
+      "id": "image_width",
+      "label": "Image width desktop",
+      "min": 50,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 75
+    },
+    {
+      "type": "range",
+      "id": "image_height_desktop",
+      "label": "Image height desktop",
+      "min": 320,
+      "max": 800,
+      "step": 20,
+      "unit": "px",
+      "default": 520
+    },
+    {
+      "type": "range",
+      "id": "image_height_mobile",
+      "label": "Image height mobile",
+      "min": 240,
+      "max": 600,
+      "step": 20,
+      "unit": "px",
+      "default": 360
+    },
+    {
+      "type": "range",
+      "id": "content_width",
+      "label": "Content box width",
+      "min": 280,
+      "max": 700,
+      "step": 10,
+      "unit": "px",
+      "default": 520
+    },
+    {
+      "type": "header",
+      "content": "Section spacing"
+    },
+    {
+      "type": "range",
+      "id": "spacing_vertical",
+      "label": "Section vertical spacing (desktop)",
+      "min": 0,
+      "max": 180,
+      "step": 4,
+      "unit": "px",
+      "default": 64
+    },
+    {
+      "type": "range",
+      "id": "mobile_spacing_vertical",
+      "label": "Section vertical spacing (mobile)",
+      "min": 0,
+      "max": 180,
+      "step": 4,
+      "unit": "px",
+      "default": 40
+    }
+  ],
+  "presets": [
+    {
+      "name": "Overlapping image text"
+    }
+  ]
+}
+{% endschema %}

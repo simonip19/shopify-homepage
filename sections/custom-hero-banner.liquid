@@ -1,0 +1,266 @@
+{{ 'section-hero-banner.css' | asset_url | stylesheet_tag }}
+
+<section
+  class="hero-banner hero-banner--{{ section.settings.content_position }}"
+  style="
+    --section-vertical-spacing: {{ section.settings.spacing_vertical }}px;
+    --section-vertical-spacing-mobile: {{ section.settings.spacing_vertical_mobile }}px;
+
+    --hero-height-desktop: {{ section.settings.hero_height_desktop }}px;
+    --hero-height-mobile: {{ section.settings.hero_height_mobile }}px;
+
+    --content-width: {{ section.settings.content_width }}px;
+
+    --mobile-content-overlap: {{ section.settings.mobile_content_overlap }}px;
+  "
+>
+  <div class="hero-banner__inner">
+    <div class="hero-banner__media">
+      {% if section.settings.image != blank %}
+        {{
+          section.settings.image
+          | image_url: width: 2400
+          | image_tag:
+            class: 'hero-banner__image',
+            loading: 'eager',
+            widths: '750, 990, 1200, 1500, 1800, 2000, 2400',
+            sizes: '100vw',
+            alt: section.settings.image.alt
+        }}
+      {% else %}
+        <div class="hero-banner__placeholder">
+          {{ 'lifestyle-1' | placeholder_svg_tag: 'placeholder-svg' }}
+        </div>
+      {% endif %}
+    </div>
+
+    <div class="hero-banner__content-wrapper page-width">
+      <div class="hero-banner__content hero-banner__content--{{ section.settings.text_alignment }}">
+        {% if section.settings.eyebrow != blank %}
+          <p class="hero-banner__eyebrow">
+            {{ section.settings.eyebrow }}
+          </p>
+        {% endif %}
+
+        {% if section.settings.heading != blank %}
+          <h2 class="hero-banner__heading">
+            {{ section.settings.heading }}
+          </h2>
+        {% endif %}
+
+        {% if section.blocks.size > 0 %}
+          <div class="hero-banner__buttons">
+            {% for block in section.blocks %}
+              {% if block.settings.button_label != blank %}
+                <a
+                  class="hero-banner__button button"
+                  href="{{ block.settings.button_link | default: '#' }}"
+                  {% if block.settings.open_new_tab %}
+                    target="_blank" rel="noopener noreferrer"
+                  {% endif %}
+                  {{ block.shopify_attributes }}
+                >
+                  {{ block.settings.button_label }}
+                </a>
+              {% endif %}
+            {% endfor %}
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Hero banner",
+  "max_blocks": 6,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Hero image"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow text",
+      "default": "In stores & online"
+    },
+    {
+      "type": "textarea",
+      "id": "heading",
+      "label": "Heading",
+      "default": "50% OFF\nEVERYTHING"
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "select",
+      "id": "content_position",
+      "label": "Content position",
+      "default": "left",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "text_alignment",
+      "label": "Text alignment",
+      "default": "center",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ]
+    },
+    {
+      "type": "range",
+      "id": "hero_height_desktop",
+      "label": "Hero height desktop",
+      "min": 400,
+      "max": 900,
+      "step": 20,
+      "unit": "px",
+      "default": 620
+    },
+    {
+      "type": "range",
+      "id": "hero_height_mobile",
+      "label": "Hero height mobile",
+      "min": 320,
+      "max": 720,
+      "step": 20,
+      "unit": "px",
+      "default": 420
+    },
+    {
+      "type": "range",
+      "id": "content_width",
+      "label": "Content width",
+      "min": 320,
+      "max": 760,
+      "step": 20,
+      "unit": "px",
+      "default": 620
+    },
+    {
+      "type": "range",
+      "id": "mobile_content_overlap",
+      "label": "Mobile content overlap",
+      "min": 0,
+      "max": 220,
+      "step": 4,
+      "unit": "px",
+      "default": 96
+    },
+    {
+      "type": "header",
+      "content": "Section spacing"
+    },
+    {
+      "type": "range",
+      "id": "spacing_vertical",
+      "label": "Section vertical spacing (desktop)",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "spacing_vertical_mobile",
+      "label": "Section vertical spacing (mobile)",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 0
+    }
+  ],
+  "blocks": [
+    {
+      "type": "button",
+      "name": "Button",
+      "settings": [
+        {
+          "type": "text",
+          "id": "button_label",
+          "label": "Button label",
+          "default": "Women"
+        },
+        {
+          "type": "url",
+          "id": "button_link",
+          "label": "Button link"
+        },
+        {
+          "type": "checkbox",
+          "id": "open_new_tab",
+          "label": "Open in new tab",
+          "default": false
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Hero banner",
+      "blocks": [
+        {
+          "type": "button",
+          "settings": {
+            "button_label": "Women"
+          }
+        },
+        {
+          "type": "button",
+          "settings": {
+            "button_label": "Men"
+          }
+        },
+        {
+          "type": "button",
+          "settings": {
+            "button_label": "Kids"
+          }
+        },
+        {
+          "type": "button",
+          "settings": {
+            "button_label": "Home"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

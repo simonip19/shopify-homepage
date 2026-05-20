@@ -1,0 +1,125 @@
+{{ 'section-custom-usp.css' | asset_url | stylesheet_tag }}
+<div id="custom-usp-{{ section.id }}" class="custom-usp page-width"
+    style="
+        --desktop-spacing-vertical: {{ section.settings.desktop_spacing_vertical }}px;
+        --desktop-spacing-horizontal: {{ section.settings.desktop_spacing_horizontal }}px;
+        --mobile-spacing-vertical: {{ section.settings.mobile_spacing_vertical }}px;
+        --mobile-spacing-horizontal: {{ section.settings.mobile_spacing_horizontal }}px;"
+>
+    <div class="custom-usp__items">
+        {% for block in section.blocks %}
+        <div class="custom-usp__item">
+            <div class="custom-usp__image-wrapper">
+            {% if block.settings.usp_icon != blank %}
+                {{
+                    block.settings.usp_icon
+                    | image_url: width: 83
+                    | image_tag:
+                    loading: 'lazy',
+                    width: block.settings.usp_icon.width,
+                    height: block.settings.usp_icon.height,
+                    class: custom-usp__icon,
+                    alt: block.settings.usp_icon.alt
+            }}
+            {% else %}
+              <div class="custom-usp__placeholder">
+                {{ 'lifestyle-1' | placeholder_svg_tag: 'placeholder-svg' }}
+              </div>
+            {% endif %}
+            </div>
+
+            {% if block.settings.usp_text != blank %}
+              <div class="custom-usp__text">{{ block.settings.usp_text }}</div>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+{% schema %}
+{
+  "name": "Custom USP",
+  "settings": [
+    {
+        "type": "header",
+        "content": "Spacing"
+    },
+    {
+        "type": "range",
+        "id": "desktop_spacing_vertical",
+        "label": "Section vertical spacing (desktop)",
+        "min": 0,
+        "max": 200,
+        "default": 20,
+        "step": 10,
+        "unit": "px"
+    },
+    {
+        "type": "range",
+        "id": "desktop_spacing_horizontal",
+        "label": "Section horizontal spacing (desktop)",
+        "min": 0,
+        "max": 200,
+        "default": 20,
+        "step": 10,
+        "unit": "px"
+    },
+    {
+        "type": "range",
+        "id": "mobile_spacing_vertical",
+        "label": "Section vertical spacing ( mobile )",
+        "min": 0,
+        "max": 200,
+        "default": 20,
+        "step": 10,
+        "unit": "px"
+    },
+    {
+        "type": "range",
+        "id": "mobile_spacing_horizontal",
+        "label": "Section horizontal spacing ( mobile )",
+        "min": 0,
+        "max": 200,
+        "default": 20,
+        "step": 10,
+        "unit": "px"
+    }
+  ],
+  "blocks": [ 
+        {
+        "type": "usp_item",
+        "name": "USP Item",
+        "settings": [
+            {
+                "type": "image_picker",
+                "id": "usp_icon", 
+                "label": "Icon"
+            },
+            {
+                "type": "richtext",
+                "id": "usp_text",
+                "label": "USP Text",
+                "default": "<p>Free Shipping on Orders Over $50</p>"
+            }
+        ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Custom USP",
+      "category": "Custom",
+      "blocks": [
+        {
+            "type": "usp_item"
+        },
+        {
+            "type": "usp_item"
+        },
+        {
+            "type": "usp_item"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

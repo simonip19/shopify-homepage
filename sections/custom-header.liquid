@@ -1,0 +1,202 @@
+{{ 'section-custom-header.css' | asset_url | stylesheet_tag }}
+
+<header
+  class="custom-header"
+  style="
+    --logo-width: {{ section.settings.logo_width }}px;
+    --mobile-logo-width: {{ section.settings.mobile_logo_width }}px;
+  "
+>
+  <div class="custom-header__main">
+    <div class="custom-header__main-inner page-width">
+      <div class="custom-header__mobile-menu">
+        <details class="custom-header__drawer">
+          <summary class="custom-header__drawer-toggle" aria-label="Open menu">
+            {% render 'icon-new-hamburger' %}
+          </summary>
+        </details>
+      </div>
+
+      <div class="custom-header__logo">
+        <h1><a href="{{ routes.root_url }}" aria-label="{{ shop.name }}">
+          {% if section.settings.logo != blank %}
+            {{
+              section.settings.logo
+              | image_url: width: 500
+              | image_tag:
+                class: 'custom-header__logo-image',
+                loading: 'eager',
+                widths: '120, 180, 240, 320, 400, 500',
+                sizes: '(max-width: 749px) 160px, 240px',
+                alt: shop.name
+            }}
+          {% else %}
+            <span class="custom-header__logo-text">
+              {{ shop.name }}
+            </span>
+          {% endif %}
+        </a></h1>
+      </div>
+
+      {% if section.settings.menu != blank %}
+        <nav class="custom-header__nav" aria-label="Main navigation">
+          <ul>
+            {% for link in section.settings.menu.links %}
+                {%- assign highlighted_menu_item = section.settings.highlighted_menu_item | handleize -%}
+                {%- assign link_title_handle = link.title | handleize -%}
+              <li>
+                <a
+                  href="{{ link.url }}"
+                  class="{% if highlighted_menu_item != blank and link_title_handle == highlighted_menu_item %}custom-header__nav-link--highlight{% endif %}"
+                  {% if link.current %} 
+                    aria-current="page"
+                  {% endif %}
+                >
+                  {{ link.title }}
+                </a>
+              </li>
+            {% endfor %}
+          </ul>
+        </nav>
+      {% endif %}
+
+      <div class="custom-header__actions">
+        {% if section.settings.show_search %}
+          <form action="{{ routes.search_url }}" method="get" role="search" class="custom-header__search">
+            <input
+              type="search"
+              name="q"
+              value="{{ search.terms | escape }}"
+              placeholder="{{ 'general.search.search' | t }}"
+              aria-label="Search"
+            >
+
+            <button type="submit" aria-label="Submit search">
+              {% render 'icon-search' %}
+            </button>
+          </form>
+        {% endif %}
+
+        {% if section.settings.show_account and shop.customer_accounts_enabled %}
+          <div class="custom-header__account">
+            {% if customer %}
+              <a class="custom-header__account-link" href="{{ routes.account_url }}">{{ 'sections.header.my_account' | t }}</a>
+            {% else %}
+              <a class="custom-header__account-link" href="{{ routes.account_url }}">{{ 'sections.header.my_account' | t }}</a>
+              <a class="custom-header__account-sub" href="{{ routes.account_login_url }}">
+                {{ 'sections.header.sign_in_or_sign_up' | t }}
+              </a>
+            {% endif %}
+          </div>
+        {% endif %}
+
+        {% if section.settings.show_cart %}
+          <a href="{{ routes.cart_url }}" class="custom-header__cart {% if section.settings.show_account %}show-separator{% endif %}" aria-label="Cart">
+            {%  render 'icon-new-cart' %}
+
+            {% if cart.item_count > 0 %}
+              <span class="custom-header__cart-count">
+                {{ cart.item_count }}
+              </span>
+            {% endif %}
+          </a>
+        {% endif %}
+      </div>
+
+      <div class="custom-header__mobile-cart">
+        <a href="{{ routes.cart_url }}" class="custom-header__cart" aria-label="Cart">
+          {% render 'icon-new-cart' %}
+
+          {% if cart.item_count > 0 %}
+            <span class="custom-header__cart-count">
+              {{ cart.item_count }}
+            </span>
+          {% endif %}
+        </a>
+      </div>
+    </div>
+  </div>
+</header>
+
+{% schema %}
+{
+  "name": "Custom header",
+  "enabled_on": {
+    "groups": ["header"]
+  },
+  "settings": [
+    {
+      "type": "header",
+      "content": "Logo"
+    },
+    {
+      "type": "image_picker",
+      "id": "logo",
+      "label": "Logo"
+    },
+    {
+      "type": "range",
+      "id": "logo_width",
+      "label": "Logo width desktop",
+      "min": 100,
+      "max": 360,
+      "step": 10,
+      "unit": "px",
+      "default": 220
+    },
+    {
+      "type": "range",
+      "id": "mobile_logo_width",
+      "label": "Logo width mobile",
+      "min": 100,
+      "max": 260,
+      "step": 10,
+      "unit": "px",
+      "default": 160
+    },
+    {
+      "type": "header",
+      "content": "Navigation"
+    },
+    {
+      "type": "link_list",
+      "id": "menu",
+      "label": "Menu"
+    },
+    {
+        "type": "text",
+        "id": "highlighted_menu_item",
+        "label": "Highlighted menu item label",
+        "default": "Sale",
+        "info": "Add the label of a menu item you want to highlight with different color."
+    },
+    {
+      "type": "header",
+      "content": "Actions"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_search",
+      "label": "Show search",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_account",
+      "label": "Show account",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_cart",
+      "label": "Show cart",
+      "default": true
+    }
+  ],
+  "presets": [
+    {
+      "name": "Custom header"
+    }
+  ]
+}
+{% endschema %}
